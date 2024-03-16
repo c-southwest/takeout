@@ -1,7 +1,9 @@
 package com.sky.service.impl;
 
 import com.sky.constant.MessageConstant;
+import com.sky.constant.PasswordConstant;
 import com.sky.constant.StatusConstant;
+import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
 import com.sky.entity.Employee;
 import com.sky.exception.AccountLockedException;
@@ -9,9 +11,13 @@ import com.sky.exception.AccountNotFoundException;
 import com.sky.exception.PasswordErrorException;
 import com.sky.mapper.EmployeeMapper;
 import com.sky.service.EmployeeService;
+import com.sky.utils.PasswordUtil;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
+
+import java.time.LocalDateTime;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -39,10 +45,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
 
         //密码比对
-        String username_tmp1 = username.replace('a', 'g');
-        String username_tmp2 = username_tmp1.replace('k', 'j');
-        String username_salt = new StringBuilder(username_tmp2).reverse().toString();
-        password = DigestUtils.md5DigestAsHex((username_salt + password).getBytes());
+        password = PasswordUtil.myPasswordSalt(username, password);
         if (!password.equals(employee.getPassword())) {
             //密码错误
             throw new PasswordErrorException(MessageConstant.PASSWORD_ERROR);
@@ -55,6 +58,25 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         //3、返回实体对象
         return employee;
+    }
+
+    @Override
+    public void save(EmployeeDTO employeeDTO) {
+        Employee employee = new Employee();
+        BeanUtils.copyProperties(employeeDTO, employee);
+
+        // 填充employee其余字段
+        String password = PasswordUtil.myPasswordSalt(employeeDTO.getUsername(), PasswordConstant.DEFAULT_PASSWORD);
+        employee.setPassword(password);
+        employee.setStatus(StatusConstant.ENABLE);
+        employee.setCreateTime(LocalDateTime.now());
+        employee.setUpdateTime(LocalDateTime.now());
+        // TODO 设置创建/修改用户id
+        employee.setCreateUser(10L);
+        employee.setUpdateUser(10L);
+
+        employeeMapper.save(employee);
+
     }
 
 }
