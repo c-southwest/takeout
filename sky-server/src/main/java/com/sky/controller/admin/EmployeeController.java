@@ -90,4 +90,12 @@ public class EmployeeController {
         return Result.success(pageResult);
     }
 
+    @PostMapping("/status/{status}")
+    @ApiOperation("设置员工账号状态setEmployeeStatus")
+    public Result setEmployeeStatus(@PathVariable Integer status, Long id){
+        log.info("设置员工状态：id={}, status={}", id, status);
+        employeeService.setEmployeeStatus(id, status);
+        return Result.success();
+    }
+
 }
