@@ -10,6 +10,8 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
+import java.util.List;
+
 @Mapper
 public interface DishMapper {
 
@@ -26,4 +28,8 @@ public interface DishMapper {
     void save(Dish dish);
 
     Page<DishVO> page(DishPageQueryDTO pageQueryDTO);
+
+    List<Dish> getEnabledDishByIds(List<Long> ids);
+
+    void deleteByIds(List<Long> ids);
 }
