@@ -10,6 +10,7 @@ import com.sky.mapper.DishMapper;
 import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.DishService;
+import com.sky.vo.DishVO;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -48,5 +49,14 @@ public class DishController {
         log.info("删除菜品：{}", ids);
         dishService.delete(ids);
         return Result.success();
+    }
+
+
+    @GetMapping("/{id}")
+    @ApiOperation("根据id获取菜品信息getById")
+    public Result<DishVO> getById(@PathVariable Long id){
+        log.info("根据id查询菜品：{}", id);
+        DishVO dishVO = dishService.getById(id);
+        return Result.success(dishVO);
     }
 }

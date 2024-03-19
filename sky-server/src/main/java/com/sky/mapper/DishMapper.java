@@ -32,4 +32,7 @@ public interface DishMapper {
     List<Dish> getEnabledDishByIds(List<Long> ids);
 
     void deleteByIds(List<Long> ids);
+
+    @Select("select * from dish where id = #{id}")
+    Dish getById(Long id);
 }
